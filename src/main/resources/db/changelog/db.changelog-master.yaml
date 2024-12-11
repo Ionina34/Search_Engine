@@ -1,0 +1,156 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-sites
+      author: darya
+      changes:
+        - createTable:
+            tableName: sites
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: site_pk
+                    nullable: false
+              - column:
+                  name: status
+                  type: enum('INDEXING', 'INDEXED', 'FAILED')
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status_time
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_error
+                  type: text
+              - column:
+                  name: url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-table-pages
+      author: darya
+      changes:
+        - createTable:
+            tableName: pages
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: page_pk
+                    nullable: false
+              - column:
+                  name: site_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_page_site
+                    references: sites(id)
+              - column:
+                  name: path
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: code
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: mediumtext
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-index-for-path
+      author: darya
+      changes:
+        - createIndex:
+            tableName: pages
+            indexName: idx_pages_path
+            columns:
+              - column:
+                  name: path(255)
+  - changeSet:
+      id: create-table-lemmas
+      author: darya
+      preConditions:
+      changes:
+        - createTable:
+            tableName: lemmas
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: lemma_pk
+                    nullable: false
+              - column:
+                  name: site_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lemma_site
+                    references: sites(id)
+              - column:
+                  name: lemma
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                  remarks: нормальная форма слова(лемма)
+              - column:
+                  name: frequency
+                  type: int
+                  constraints:
+                    nullable: false
+                  remarks: количество страниц, на которых слово встречается хотя бы один раз
+  - changeSet:
+      id: create-table-indexes
+      author: darya
+      changes:
+        - createTable:
+            tableName: indexes
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: lemma_pk
+                    nullable: false
+              - column:
+                  name: page_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_index_page
+                    references: pages(id)
+              - column:
+                  name: lemma_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_index_lemma
+                    references: lemmas(id)
+              - column:
+                  name: rank
+                  type: float
+                  remarks: количество данной леммы для данной страницы
+                  constraints:
+                    nullable: false
