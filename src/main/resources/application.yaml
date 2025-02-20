@@ -1,0 +1,29 @@
+indexing-settings:
+  sites:
+    - url: https://sendel.ru
+      name: Сендал.ру
+    - url: https://www.playback.ru/
+      name: PlayBack.R
+
+request-settings:
+  user: Mozilla/5.0 (Windows; U; WindowsNT 5.1 en-US; rv1.8.1.6) Gecko/20070725 Firefow/2.0.0.6
+  referrer: http://www.google.com
+spring:
+  datasource:
+    url: jdbc:mysql://db:3306/search_engine?useSSL=false&requireSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: main_user
+    password: main_password
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  messages:
+    basename: lang/messages
+
+liquibase:
+  change-log: classpath:db/changelog/db.changelog-master.yaml
+  enabled: true
+  drop-first: true

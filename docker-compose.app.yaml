@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    volumes:
+      - logs_volume:/logs
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: search_engine
+      MYSQL_USER: main_user
+      MYSQL_PASSWORD: main_password
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  logs_volume:
